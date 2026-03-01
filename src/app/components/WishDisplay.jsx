@@ -115,9 +115,19 @@ export function PolaroidDisplay({ message, photo1, photo2, gifTL, gifBR }) {
             backgroundImage: "repeating-linear-gradient(transparent,transparent 23px,#d4b896 23px,#d4b896 24px)",
             height: "60cqh",
             overflow: "hidden",
+            paddingTop: "24px", // đẩy text xuống ngồi đúng trên dòng kẻ đầu tiên
           }}
         >
-          <p className="leading-6 text-gray-700 whitespace-pre-wrap wrap-break-word" style={{ fontFamily: "var(--font-dancing)", fontSize: "clamp(1rem, 5cqw, 1.4rem)" }}>
+          <p
+            className="text-gray-700 whitespace-pre-wrap wrap-break-word"
+            style={{
+              fontFamily: "var(--font-dancing)",
+              fontSize: "clamp(1rem, 5cqw, 1.4rem)",
+              lineHeight: "24px", // khớp đúng với khoảng cách đường kẻ
+              paddingTop: "0",
+              margin: "0",
+            }}
+          >
             {message}
           </p>
         </div>

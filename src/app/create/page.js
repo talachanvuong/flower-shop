@@ -303,8 +303,25 @@ function PolaroidPreview({ form, gifTL, gifBR }) {
     <div className="relative w-full overflow-hidden cursor-pointer select-none bg-rose-950 rounded-2xl" style={{ containerType: "size", aspectRatio: "3/4" }} onClick={() => setActive(polaroidActive ? "letter" : "polaroid")}>
       {/* Letter */}
       <div className={`absolute transition-all duration-500 ${!polaroidActive ? "z-20 opacity-100 blur-none" : "z-0 opacity-40 blur-sm"}`} style={{ top: "50%", left: "50%", width: "80%", transform: "translate(-50%, -50%) rotate(2deg)" }}>
-        <div className="w-full p-4 rounded-sm shadow-2xl bg-amber-50" style={{ backgroundImage: "repeating-linear-gradient(transparent,transparent 23px,#d4b896 23px,#d4b896 24px)", height: "60cqh", overflow: "hidden" }}>
-          <p className="leading-6 text-gray-700 whitespace-pre-wrap wrap-break-word" style={{ fontFamily: "var(--font-dancing)", fontSize: "clamp(1rem, 5cqw, 1.4rem)" }}>
+        <div
+          className="w-full p-4 rounded-sm shadow-2xl bg-amber-50"
+          style={{
+            backgroundImage: "repeating-linear-gradient(transparent,transparent 23px,#d4b896 23px,#d4b896 24px)",
+            height: "60cqh",
+            overflow: "hidden",
+            paddingTop: "24px", // đẩy text xuống ngồi đúng trên dòng kẻ đầu tiên
+          }}
+        >
+          <p
+            className="text-gray-700 whitespace-pre-wrap wrap-break-word"
+            style={{
+              fontFamily: "var(--font-dancing)",
+              fontSize: "clamp(1rem, 5cqw, 1.4rem)",
+              lineHeight: "24px", // khớp đúng với khoảng cách đường kẻ
+              paddingTop: "0",
+              margin: "0",
+            }}
+          >
             {message}
           </p>
         </div>
