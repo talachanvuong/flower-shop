@@ -79,15 +79,98 @@ function ImagePicker({ value, onChange, label }) {
 // ─── GifPicker ───────────────────────────────────────────────
 
 function GifPicker({ value, onChange, label, presets }) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [mode, setMode] = useState("preset");
+  const debounceRef = useRef(null);
+
+  async function searchGifs(q) {
+    if (!q.trim()) {
+      setResults([]);
+      setMode("preset");
+      return;
+    }
+    setSearching(true);
+    setMode("search");
+    try {
+      const res = await fetch(`https://api.giphy.com/v1/stickers/search?q=${encodeURIComponent(q)}&api_key=${process.env.NEXT_PUBLIC_GIPHY_API_KEY}&limit=50&rating=g`);
+      const data = await res.json();
+
+      if (res.status === 429) {
+        setResults([]);
+        setMode("ratelimit");
+        return;
+      }
+
+      if (!res.ok) {
+        setResults([]);
+        setMode("error");
+        return;
+      }
+
+      const gifs = (data.data || []).map((r) => ({
+        id: r.id,
+        src: r.images?.fixed_width_small?.url || r.images?.downsized?.url,
+        label: r.title || r.id,
+      }));
+      setResults(gifs);
+    } catch {
+      setResults([]);
+      setMode("error");
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function handleInput(e) {
+    const q = e.target.value;
+    setQuery(q);
+    clearTimeout(debounceRef.current);
+    if (!q.trim()) {
+      setMode("preset");
+      setResults([]);
+      return;
+    }
+    debounceRef.current = setTimeout(() => searchGifs(q), 500);
+  }
+
+  const displayList = mode === "search" ? results : presets;
+
   return (
     <div className="flex flex-col gap-1.5">
       {label && <span className="text-sm font-medium text-gray-700">{label}</span>}
-      <div className="flex flex-wrap gap-2">
-        {presets.map((g) => (
-          <button key={g.id} type="button" onClick={() => onChange(g)} className={`overflow-hidden rounded-lg border-2 w-12 h-12 bg-pink-100 ${value?.id === g.id ? "border-pink-500" : "border-transparent hover:border-pink-300"}`}>
-            {g.src && <img src={g.src} alt={g.label} className="object-cover w-full h-full" />}
-          </button>
-        ))}
+
+      <input type="text" value={query} onChange={handleInput} placeholder="Tìm sticker..." className="w-full px-3 py-1.5 text-xs bg-white border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300" />
+
+      <div className="relative min-h-16">
+        {searching && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-pink-300 border-t-pink-500 rounded-full animate-spin" />
+          </div>
+        )}
+
+        {!searching && mode === "ratelimit" && <p className="text-xs text-center text-amber-500 py-3">Đã đạt giới hạn tìm kiếm, vui lòng thử lại sau ít phút.</p>}
+
+        {!searching && mode === "error" && <p className="text-xs text-center text-red-400 py-3">Không thể tải sticker, vui lòng thử lại.</p>}
+
+        {!searching && mode === "search" && results.length === 0 && <p className="text-xs text-center text-gray-400 py-3">Không tìm thấy kết quả</p>}
+
+        {!searching && (
+          <div className="flex flex-wrap gap-1.5">
+            {displayList.map((g) => (
+              <button key={g.id} type="button" onClick={() => onChange(g)} className={`cursor-pointer overflow-hidden rounded-lg border-2 w-12 h-12 bg-pink-50 shrink-0 ${value?.id === g.id ? "border-pink-500" : "border-transparent hover:border-pink-300"}`}>
+                {g.src && <img src={g.src} alt={g.label || ""} className="object-cover w-full h-full" />}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {mode === "search" && results.length > 0 && (
+          <p className="mt-1 text-right text-gray-300" style={{ fontSize: "0.6rem" }}>
+            via GIPHY
+          </p>
+        )}
       </div>
     </div>
   );
@@ -418,7 +501,9 @@ export default function CreatePage() {
         const [path1, path2] = await Promise.all([uploadImage(form.photo1, `${prefix}_1.jpg`), uploadImage(form.photo2, `${prefix}_2.jpg`)]);
         data = {
           gifTL: gifTL.id,
+          gifTLSrc: gifTL.src, // thêm
           gifBR: gifBR.id,
+          gifBRSrc: gifBR.src, // thêm
           photo1: path1,
           photo2: path2,
         };

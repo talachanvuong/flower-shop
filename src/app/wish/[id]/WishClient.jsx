@@ -6,8 +6,8 @@ export default function WishClient({ wish }) {
   const { template, message, data } = wish;
 
   // Resolve GIF src từ id
-  const gifTLSrc = [...PRESET_GIFS_LEFT, ...PRESET_GIFS_RIGHT].find((g) => g.id === data.gifTL)?.src;
-  const gifBRSrc = [...PRESET_GIFS_LEFT, ...PRESET_GIFS_RIGHT].find((g) => g.id === data.gifBR)?.src;
+  const gifTLSrc = data.gifTLSrc || [...PRESET_GIFS_LEFT, ...PRESET_GIFS_RIGHT].find((g) => g.id === data.gifTL)?.src;
+  const gifBRSrc = data.gifBRSrc || [...PRESET_GIFS_LEFT, ...PRESET_GIFS_RIGHT].find((g) => g.id === data.gifBR)?.src;
 
   // Resolve public URL ảnh từ Supabase storage
   function getUrl(path) {
