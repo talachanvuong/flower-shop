@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import imageCompression from "browser-image-compression";
 import { useRef, useState } from "react";
+import MusicPicker from "@/app/components/MusicPicker";
 
 const PRESET_GIFS_LEFT = [
   { id: "l1", label: "Left 1", src: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXVtNTQ2NHdtc3cyYWZ0OXQyNmJkaWl4NDY2NzZuaG0yOXEwZTN1ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/I5r4ErmOa63wAy9spl/giphy.gif" },
@@ -448,6 +449,7 @@ export default function CreatePage() {
   const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [music, setMusic] = useState(null);
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -506,6 +508,7 @@ export default function CreatePage() {
           gifBRSrc: gifBR.src, // thêm
           photo1: path1,
           photo2: path2,
+          music: music ? { src: music.src, title: music.title } : null,
         };
       }
 
@@ -608,6 +611,7 @@ export default function CreatePage() {
                 <GifPicker label="GIF góc trái" value={gifTL} onChange={setGifTL} presets={PRESET_GIFS_LEFT} />
                 <GifPicker label="GIF góc phải" value={gifBR} onChange={setGifBR} presets={PRESET_GIFS_RIGHT} />
               </div>
+              <MusicPicker value={music} onChange={setMusic} />
             </div>
           )}
 

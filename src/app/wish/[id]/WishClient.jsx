@@ -1,6 +1,7 @@
 "use client";
 
 import { PolaroidDisplay, HeartDisplay, PRESET_GIFS_LEFT, PRESET_GIFS_RIGHT } from "@/app/components/WishDisplay";
+import MusicPlayer from "@/app/components/MusicPlayer";
 
 export default function WishClient({ wish }) {
   const { template, message, data } = wish;
@@ -27,6 +28,7 @@ export default function WishClient({ wish }) {
         {template === "polaroid" && <PolaroidDisplay message={message} photo1={getUrl(data.photo1)} photo2={getUrl(data.photo2)} gifTL={gifTLSrc} gifBR={gifBRSrc} />}
         {template === "heart" && <HeartDisplay message={message} heartTitle={data.heartTitle} heartPhotos={(data.heartPhotos || []).map(getUrl)} />}
       </div>
+      {wish.data.music && <MusicPlayer src={wish.data.music.src} title={wish.data.music.title} />}
     </div>
   );
 }
