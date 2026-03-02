@@ -517,6 +517,7 @@ export default function CreatePage() {
         data = {
           heartTitle: form.heartTitle,
           heartPhotos: paths,
+          music: music ? { src: music.src, title: music.title } : null,
         };
       }
 
@@ -628,6 +629,7 @@ export default function CreatePage() {
               </div>
               <p className="text-xs text-gray-400">Nhấn vào từng ô trong preview để chọn ảnh</p>
               {submitted && errors.heartPhotos && <p className="text-xs text-red-400">{errors.heartPhotos}</p>}
+              <MusicPicker value={music} onChange={setMusic} />
             </div>
           )}
 
